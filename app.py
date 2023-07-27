@@ -88,6 +88,23 @@ card_n_copas = dbc.Card(
     style={"width": "18rem"},
 )
 
+card_c2 = dbc.Card(
+    dbc.CardBody(
+        [
+            dbc.RadioItems(options=competicoes, value=competicoes[0], id='radio-01-liga-copa', inline=True, style={}),
+            
+            html.Hr(),
+            
+            html.H6('Rodada:', style={}),
+            dcc.Dropdown(id='dpd-01-rodada'),
+            
+            html.Hr(),
+            
+            html.H6('Critério:', style={}),
+            dcc.Dropdown(options=lista_criterio, value=lista_criterio[0], id='dpd-02-criterios') 
+        ]
+    ),
+style={})
 
 columnDefs = [
     {'field': 'PLAYER', 'width': 120, 'autosize': True},
@@ -129,7 +146,8 @@ app.layout = html.Div([
             dbc.Row(dag.AgGrid(id="ranking-table", rowData=df_table.to_dict("records"), columnDefs=columnDefs, defaultColDef={"resizable": True, "sortable": True}, style={'height':'300px'})), 
                 ], lg=6),
         
-        dbc.Col([dbc.Row(), dbc.Row()], lg=6)
+        dbc.Col([dbc.Row([dbc.Col(card_c2,lg=2), dbc.Col([dcc.Graph(id='grafico-02-rg-c2-r1-c2')],lg=5), dbc.Col([dcc.Graph(id='grafico-02-rg-c2-r1-c3')], lg=5)]), 
+                 dbc.Row()], lg=6)
     ])
 ])
 
@@ -152,6 +170,45 @@ def update_grafico_um(criterio):
     else:
         fig_gks = px.bar(df_goleiros_gs, x='PLAYER', y=['GS','STG', 'DD'], barmode="group", title='GKs - GS / STG / DDs')
         return fig_gks
+    
+#            #disparador dropdown
+@app.callback(
+    Output('dpd-01-rodada', 'options'),
+    Input('radio-01-liga-copa', 'value')
+)
+def update_drop_um(selection):
+    if selection == 'LIGA':
+        return lista_rodadas_liga
+    else:
+        return lista_rodadas_copa
+
+#            #grafico rodada
+@app.callback(
+    Output('grafico-02-rg-c2-r1-c2', 'figure'),
+    Input('radio-01-liga-copa', 'value'),
+    Input('dpd-01-rodada', 'value'),
+)
+def update_grafico_01_c1(competicao, rodada):
+        df_target = df_season.loc[df_season['COMPETIÇÃO']==competicao]
+        df_target = df_target.loc[df_target['RODADA']==rodada]
+        df_target = df_target.groupby('TIME').agg({'V':'sum', 'E':'sum', 'D':'sum'})/6
+        df_target = df_target.reset_index()
+        
+        fig = make_subplots(rows=1, cols=1, subplot_titles=('V/E/D', 'PTS'))
+        
+        fig.add_trace(go.Bar(x=df_target['TIME'], y=df_target['V'], marker=dict(color='#3ADE3E'), name='Vitórias', showlegend=False), row=1, col=1)
+        fig.add_trace(go.Bar(x=df_target['TIME'], y=df_target['E'], marker=dict(color='#EAE5B4'), name='Empates', showlegend=False), row=1, col=1)
+        fig.add_trace(go.Bar(x=df_target['TIME'], y=df_target['D'], marker=dict(color='#F52D2A'), name='Derrotas', showlegend=False), row=1, col=1)
+        
+        return fig
+
+
+@app.callback(
+    Output('dpd-01-rodada', 'value'),
+    Input('dpd-01-rodada', 'options')
+)
+def set_rodada(available_options):
+    return available_options[0]
         
 # Servidor  =================
 if __name__=='__main__':
