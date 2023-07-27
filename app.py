@@ -104,7 +104,7 @@ card_c2 = dbc.Card(
             dcc.Dropdown(options=lista_criterio, value=lista_criterio[0], id='dpd-02-criterios') 
         ]
     ),
-style={})
+style={'height':'100%'})
 
 columnDefs = [
     {'field': 'PLAYER', 'width': 120, 'autosize': True},
@@ -146,8 +146,12 @@ app.layout = html.Div([
             dbc.Row(dag.AgGrid(id="ranking-table", rowData=df_table.to_dict("records"), columnDefs=columnDefs, defaultColDef={"resizable": True, "sortable": True}, style={'height':'300px'})), 
                 ], lg=6),
         
-        dbc.Col([dbc.Row([dbc.Col(card_c2,lg=2), dbc.Col([dcc.Graph(id='grafico-02-rg-c2-r1-c2')],lg=5), dbc.Col([dcc.Graph(id='grafico-02-rg-c2-r1-c3')], lg=5)]), 
-                 dbc.Row()], lg=6)
+        dbc.Col([dbc.Card(dbc.CardBody(
+                [
+                dbc.Row(html.H6('Análise por Rodada'),style={}),
+                dbc.Row([dbc.Col(card_c2,lg=2), dbc.Col([dcc.Graph(id='grafico-02-rg-c2-r1-c2')],lg=5), dbc.Col([dcc.Graph(id='grafico-02-rg-c2-r1-c3')], lg=5)]), 
+                ])),
+                dbc.Row()], lg=6)
     ])
 ])
 
@@ -182,6 +186,15 @@ def update_drop_um(selection):
     else:
         return lista_rodadas_copa
 
+@app.callback(
+    Output('dpd-01-rodada', 'value'),
+    Input('dpd-01-rodada', 'options')
+)
+def set_rodada(available_options):
+    return available_options[0]
+
+
+
 #            #grafico rodada
 @app.callback(
     Output('grafico-02-rg-c2-r1-c2', 'figure'),
@@ -199,17 +212,32 @@ def update_grafico_01_c1(competicao, rodada):
         fig.add_trace(go.Bar(x=df_target['TIME'], y=df_target['V'], marker=dict(color='#3ADE3E'), name='Vitórias', showlegend=False), row=1, col=1)
         fig.add_trace(go.Bar(x=df_target['TIME'], y=df_target['E'], marker=dict(color='#EAE5B4'), name='Empates', showlegend=False), row=1, col=1)
         fig.add_trace(go.Bar(x=df_target['TIME'], y=df_target['D'], marker=dict(color='#F52D2A'), name='Derrotas', showlegend=False), row=1, col=1)
-        
+        fig.update_layout(yaxis_title=None)
+        fig.update_layout(xaxis_title=None)
+        fig.update_layout(margin=dict(l=0, r=0, t=20, b=0))
         return fig
 
 
+#          #grafico gol/ass rodada
 @app.callback(
-    Output('dpd-01-rodada', 'value'),
-    Input('dpd-01-rodada', 'options')
+    Output('grafico-02-rg-c2-r1-c3', 'figure'),
+    Input('radio-01-liga-copa', 'value'),
+    Input('dpd-01-rodada', 'value'),
 )
-def set_rodada(available_options):
-    return available_options[0]
+def update_grafico_01_c1(competicao, rodada):
+        df_target_rodada = df_season.loc[df_season['COMPETIÇÃO']==competicao]
+        df_target_rodada = df_target_rodada.loc[df_target_rodada['RODADA']==rodada]
+        df_target_rodada = df_target_rodada.groupby('PLAYER').agg({'GOL':'sum', 'ASS':'sum', 'STG':'sum'})
+        df_target_rodada = df_target_rodada.loc[(df_target_rodada['GOL']>0) | (df_target_rodada['ASS']>0)]
+        df_target_rodada = df_target_rodada.reset_index()
         
+        fig = px.bar(data_frame=df_target_rodada, x='PLAYER', y=['GOL', 'ASS'], barmode='group', title='GOL/ASS')
+        fig.update_layout(margin=dict(l=0, r=0, t=30, b=0))
+        fig.update_layout(yaxis_title=None)
+        fig.update_layout(xaxis_title=None)
+        
+        return fig
+    
 # Servidor  =================
 if __name__=='__main__':
     app.run_server(debug=True)
