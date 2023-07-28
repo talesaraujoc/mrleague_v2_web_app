@@ -27,12 +27,12 @@ card_total_partidas = dbc.Card(
         dbc.CardImg(src="/assets/image_1.png", top=True, style={'max-width':'58px','max-height':'58px', 'padding-left':'20px', 'padding-top':'20px'}),
         dbc.CardBody(
             [
-                html.H5("Partidas", className="card-title"),
-                html.H2(n_partidas_totais)
+                html.H6("Partidas", className="card-title"),
+                html.H6(n_partidas_totais)
             ]
         ),
     ],
-    style={"width": "18rem"},
+    
 )
 
 card_total_gols = dbc.Card(
@@ -40,12 +40,12 @@ card_total_gols = dbc.Card(
         dbc.CardImg(src="/assets/bola_simbolo_card.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
         dbc.CardBody(
             [
-                html.H5("Gols", className="card-title"),
-                html.H2(n_gols_temporada)
+                html.H6("Gols", className="card-title"),
+                html.H6(n_gols_temporada)
             ]
         ),
     ],
-    style={"width": "18rem"},
+    
 )
 
 card_lider_atual = dbc.Card(
@@ -53,13 +53,13 @@ card_lider_atual = dbc.Card(
         dbc.CardImg(src="/assets/Trofeu_1.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
         dbc.CardBody(
             [
-                html.H5("1° geral", className="card-title"),
-                html.H2(lider_geral)
+                html.H6("1° geral", className="card-title"),
+                html.H6(lider_geral)
                 
             ]
         ),
     ],
-    style={"width": "18rem"},
+    
 )
 
 card_n_rodadas = dbc.Card(
@@ -67,12 +67,12 @@ card_n_rodadas = dbc.Card(
         dbc.CardImg(src="/assets/n_rodadas.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
         dbc.CardBody(
             [
-                html.H5("N° de rodadas|Liga", className="card-title"),
-                html.H2(n_rodadas_liga)
+                html.H6("Rodadas|Liga", className="card-title"),
+                html.H6(n_rodadas_liga)
             ]
         ),
     ],
-    style={"width": "18rem"},
+    
 )
 
 card_n_copas = dbc.Card(
@@ -80,12 +80,12 @@ card_n_copas = dbc.Card(
         dbc.CardImg(src="/assets/n_rodadas.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
         dbc.CardBody(
             [
-                html.H5("N° de rodadas|Copa", className="card-title"),
-                html.H2(n_rodadas_copa)
+                html.H6("Copas", className="card-title"),
+                html.H6(n_rodadas_copa)
             ]
         ),
     ],
-    style={"width": "18rem"},
+    
 )
 
 card_c2 = dbc.Card(
@@ -101,7 +101,7 @@ card_c2 = dbc.Card(
             html.Hr(),
             
             html.H6('Critério:', style={}),
-            dcc.Dropdown(options=lista_criterio, value=lista_criterio[0], id='dpd-02-criterios') 
+            dcc.Dropdown(options=lista_criterio, value=lista_criterio[-1], id='dpd-02-criterios') 
         ]
     ),
 style={'height':'100%'})
@@ -127,11 +127,12 @@ app.layout = html.Div([
     dbc.Row([
         dbc.Col([
             dbc.Row([
+                dbc.Col(html.Img(),lg=2),
                 dbc.Col(dbc.Card(card_total_partidas, color="primary", style={"opacity": 0.9}), lg=2),
                 dbc.Col(dbc.Card(card_total_gols, color='secondary', style={"opacity": 0.9}), lg=2),
                 dbc.Col(dbc.Card(card_lider_atual, color='success', style={"opacity": 0.9}), lg=2),
                 dbc.Col(dbc.Card(card_n_rodadas, color='warning', style={"opacity": 0.9}), lg=2),
-                dbc.Col(dbc.Card(card_n_copas, color='#64A9DE', style={"opacity": 0.9}), lg=2),
+                dbc.Col(dbc.Card(card_n_copas, color='#64A9DE', style={"opacity": 0.9}), lg=2)
                 ], style={'padding-bottom':'20px'}), 
                  
             dbc.Row(dbc.Card(dbc.CardBody([
@@ -149,9 +150,21 @@ app.layout = html.Div([
         dbc.Col([dbc.Card(dbc.CardBody(
                 [
                 dbc.Row(html.H6('Análise por Rodada'),style={}),
+                
                 dbc.Row([dbc.Col(card_c2,lg=2), dbc.Col([dcc.Graph(id='grafico-02-rg-c2-r1-c2')],lg=5), dbc.Col([dcc.Graph(id='grafico-02-rg-c2-r1-c3')], lg=5)]), 
                 ])),
-                dbc.Row()], lg=6)
+                 
+                dbc.Row(dbc.Card(dbc.CardBody([dbc.Col([dbc.Row([dcc.Dropdown(options=lista_players, value='Lotta',id='identificador-player'), html.Div(id='disparador-imagem')]), 
+                                                        dbc.Row(dbc.Card(dbc.CardBody([
+                                                            html.Header('Posição Geral')
+                                                            ])))], 
+                                                       lg=2), 
+                                               
+                                               dbc.Col([dbc.Row([dbc.Col([dcc.Graph()], lg=4), dbc.Col([dcc.Graph()], lg=4), dbc.Col([dcc.Graph()], lg=4)]), 
+                                                        dbc.Row(dcc.Graph())], 
+                                                       lg=10)]
+                                              )))], 
+            lg=6)
     ])
 ])
 
@@ -218,26 +231,51 @@ def update_grafico_01_c1(competicao, rodada):
         return fig
 
 
-#          #grafico gol/ass rodada
+#          #grafico criterios rodada
 @app.callback(
     Output('grafico-02-rg-c2-r1-c3', 'figure'),
     Input('radio-01-liga-copa', 'value'),
     Input('dpd-01-rodada', 'value'),
+    Input('dpd-02-criterios', 'value')
 )
-def update_grafico_01_c1(competicao, rodada):
-        df_target_rodada = df_season.loc[df_season['COMPETIÇÃO']==competicao]
-        df_target_rodada = df_target_rodada.loc[df_target_rodada['RODADA']==rodada]
-        df_target_rodada = df_target_rodada.groupby('PLAYER').agg({'GOL':'sum', 'ASS':'sum', 'STG':'sum'})
-        df_target_rodada = df_target_rodada.loc[(df_target_rodada['GOL']>0) | (df_target_rodada['ASS']>0)]
-        df_target_rodada = df_target_rodada.reset_index()
-        
-        fig = px.bar(data_frame=df_target_rodada, x='PLAYER', y=['GOL', 'ASS'], barmode='group', title='GOL/ASS')
-        fig.update_layout(margin=dict(l=0, r=0, t=30, b=0))
-        fig.update_layout(yaxis_title=None)
-        fig.update_layout(xaxis_title=None)
-        
-        return fig
+def update_grafico_01_c1(competicao, rodada, criterio):
+        if criterio == 'GOL' or criterio=='ASS':
+            df_target_rodada = df_season.loc[df_season['COMPETIÇÃO']==competicao]
+            df_target_rodada = df_target_rodada.loc[df_target_rodada['RODADA']==rodada]
+            df_target_rodada = df_target_rodada.groupby('PLAYER').agg({criterio:'sum'})
+            df_target_rodada = df_target_rodada.loc[(df_target_rodada[criterio]>0)]
+            df_target_rodada = df_target_rodada.reset_index()
+            
+            fig = px.bar(data_frame=df_target_rodada, x='PLAYER', y=criterio, barmode='group', title=criterio)
+            fig.update_layout(margin=dict(l=0, r=0, t=30, b=0))
+            fig.update_layout(yaxis_title=None)
+            fig.update_layout(xaxis_title=None)
+            
+            return fig
+        else:
+            df_target_rodada = df_season.loc[df_season['COMPETIÇÃO']==competicao]
+            df_target_rodada = df_target_rodada.loc[df_target_rodada['RODADA']==rodada]
+            df_target_rodada = df_target_rodada.groupby('PLAYER').agg({criterio:'sum'})
+            df_target_rodada = df_target_rodada.reset_index()
+            
+            fig = px.bar(data_frame=df_target_rodada, x='PLAYER', y=criterio, barmode='group', title=criterio)
+            fig.update_layout(margin=dict(l=0, r=0, t=30, b=0))
+            fig.update_layout(yaxis_title=None)
+            fig.update_layout(xaxis_title=None)
+            
+            return fig
     
+
+#          #disparador imagem
+@app.callback(
+    Output('disparador-imagem', 'children'),
+    Input('identificador-player', 'value')
+)
+def update_image(nome):
+    children = html.Img(src=f"/assets/{nome}.png", style={'height':'150px'})
+    return children
+
+
 # Servidor  =================
 if __name__=='__main__':
     app.run_server(debug=True)

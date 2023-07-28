@@ -56,4 +56,8 @@ competicoes = df_season['COMPETIÇÃO'].unique()
 lista_rodadas_liga = df_liga['RODADA'].unique()
 lista_rodadas_copa = df_copa['RODADA'].unique()
 
-lista_criterio = ['STG', 'GC', 'AMA', 'AZUL', 'VER', 'PP', 'FALTA']
+lista_criterio = ['GOL','ASS','STG', 'GC', 'AMA', 'AZUL', 'VER', 'PP', 'FALTA', 'PTS']
+
+# lista players
+
+lista_players = df_season['PLAYER'].unique()
