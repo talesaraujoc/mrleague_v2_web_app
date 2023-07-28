@@ -12,9 +12,9 @@ import dash_ag_grid as dag
 
 
 # Servidor
-load_figure_template("united")
+load_figure_template("yeti")
 
-app = dash.Dash(external_stylesheets=[dbc.themes.UNITED])
+app = dash.Dash(external_stylesheets=[dbc.themes.YETI])
 server = app.server
 
 # DataFrame =================
@@ -147,24 +147,14 @@ app.layout = html.Div([
             dbc.Row(dag.AgGrid(id="ranking-table", rowData=df_table.to_dict("records"), columnDefs=columnDefs, defaultColDef={"resizable": True, "sortable": True}, style={'height':'300px'})), 
                 ], lg=6),
         
-        dbc.Col([dbc.Card(dbc.CardBody(
-                [
-                dbc.Row(html.H6('Análise por Rodada'),style={}),
-                
-                dbc.Row([dbc.Col(card_c2,lg=2), dbc.Col([dcc.Graph(id='grafico-02-rg-c2-r1-c2')],lg=5), dbc.Col([dcc.Graph(id='grafico-02-rg-c2-r1-c3')], lg=5)]), 
-                ])),
-                 
-                dbc.Row(dbc.Card(dbc.CardBody([dbc.Col([dbc.Row([dcc.Dropdown(options=lista_players, value='Lotta',id='identificador-player'), html.Div(id='disparador-imagem')]), 
-                                                        dbc.Row(dbc.Card(dbc.CardBody([
-                                                            html.Header('Posição Geral')
-                                                            ])))], 
-                                                       lg=2), 
-                                               
-                                               dbc.Col([dbc.Row([dbc.Col([dcc.Graph()], lg=4), dbc.Col([dcc.Graph()], lg=4), dbc.Col([dcc.Graph()], lg=4)]), 
-                                                        dbc.Row(dcc.Graph())], 
-                                                       lg=10)]
-                                              )))], 
-            lg=6)
+        
+        dbc.Col([
+            dbc.Row(dbc.Card(dbc.CardBody(dbc.Row([dbc.Col(card_c2,lg=2), dbc.Col(dcc.Graph(id='grafico-02-rg-c2-r1-c2'),lg=5), dbc.Col(dcc.Graph(id='grafico-02-rg-c2-r1-c3'), lg=5)])))), 
+            dbc.Row(dbc.Card(dbc.CardBody(dbc.Row([
+                dbc.Col([dbc.Row([dcc.Dropdown(options=lista_players, value='Lotta',id='identificador-player'), html.Div(id='disparador-imagem')]), dbc.Row(html.Header('Posição Geral'))], lg=2),
+                dbc.Col([dbc.Row([dbc.Col([dcc.Graph()], lg=6), dbc.Col([dcc.Graph()], lg=6)]), dbc.Row(dcc.Graph())], lg=10)
+            ]))))
+            ], lg=6)
     ])
 ])
 
