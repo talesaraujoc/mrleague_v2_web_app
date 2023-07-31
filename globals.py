@@ -17,6 +17,7 @@ lider_geral = df_corrida_geral.iloc[0]['PLAYER']
 df_table = df_season.groupby('PLAYER').agg({'V':'sum', 'E':'sum', 'D':'sum', 'GOL':'sum', 'ASS':'sum', 'STG':'sum','AMA':'sum', 'AZUL':'sum', 'VER':'sum','FALTA':'sum', 'PTS':'sum'})
 df_table = df_table.sort_values(by='PTS', ascending=False)
 df_table = df_table.reset_index()
+df_table['POSITION'] = df_table.index.values + 1
 
 #algumas variáveis
 lista_partidas = df['PARTIDA'].to_list()
@@ -55,6 +56,12 @@ df_copa.fillna(0, inplace=True)
 competicoes = df_season['COMPETIÇÃO'].unique()
 lista_rodadas_liga = df_liga['RODADA'].unique()
 lista_rodadas_copa = df_copa['RODADA'].unique()
+
+rodadas_liga = lista_rodadas_liga.tolist()
+rodadas_copa = lista_rodadas_copa.tolist()
+len_liga = len(rodadas_liga)
+len_rodada = len(rodadas_copa)
+total_rodadas_season = len_liga + len_rodada
 
 lista_criterio = ['GOL','ASS','STG', 'GC', 'AMA', 'AZUL', 'VER', 'PP', 'FALTA', 'PTS']
 

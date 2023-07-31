@@ -106,6 +106,30 @@ card_c2 = dbc.Card(
     ),
 style={'height':'100%'})
 
+card_position = dbc.Card(
+    [
+        dbc.CardBody(
+            [
+
+                html.H6(id='disparador-posicao')
+            ]
+        ),
+    ],
+    
+style={'width':'70%'})
+
+card_n_rodadas_individual = dbc.Card(
+    [
+        dbc.CardBody(
+            [
+
+                html.H6(id='disparador-rodadas')
+            ]
+        ),
+    ],
+    
+style={'width':'70%'})
+
 columnDefs = [
     {'field': 'PLAYER', 'width': 120, 'autosize': True},
     {'field': 'V', 'width': 60},
@@ -116,8 +140,8 @@ columnDefs = [
     {'field': 'STG', 'width': 80},
     {'field': 'AMA', 'width': 80},
     {'field': 'AZUL', 'width': 80},
-    {'field': 'VER', 'width': 80},
-    {'field': 'FALTA', 'width': 90},
+    {'field': 'VER', 'width': 75},
+    {'field': 'FALTA', 'width': 76},
     {'field': 'PTS', 'width': 90},
 ]
 
@@ -133,7 +157,7 @@ app.layout = html.Div([
                 dbc.Col(dbc.Card(card_lider_atual, color='success', style={"opacity": 0.9}), lg=2),
                 dbc.Col(dbc.Card(card_n_rodadas, color='warning', style={"opacity": 0.9}), lg=2),
                 dbc.Col(dbc.Card(card_n_copas, color='#64A9DE', style={"opacity": 0.9}), lg=2)
-                ], style={'padding-bottom':'20px'}), 
+                ], style={'padding-bottom':'20px'}, className='main_row g-2 my-auto'), 
                  
             dbc.Row(dbc.Card(dbc.CardBody([
                 dcc.Dropdown(id='dpd-01-rg/c1/r2', 
@@ -143,19 +167,24 @@ app.layout = html.Div([
                                     {'label': 'TOP Assistências', 'value': 'assistencia'},
                                     {'label': 'Goleiros', 'value': 'gks'}], value='ranking'),
                 dcc.Graph(id='grafico-01-rg/c2/r2', style={'height':'400px'}),
-                ]))), 
-            dbc.Row(dag.AgGrid(id="ranking-table", rowData=df_table.to_dict("records"), columnDefs=columnDefs, defaultColDef={"resizable": True, "sortable": True}, style={'height':'300px'})), 
+                ])), style={'margin-right':'10px', 'margin-left':'10px'}), 
+            dbc.Row(dag.AgGrid(id="ranking-table", rowData=df_table.to_dict("records"), columnDefs=columnDefs, defaultColDef={"resizable": True, "sortable": True}, style={'height':'300px','margin-left':'10px', 'margin-top':'10px', 'padding-right':'20px'})), 
                 ], lg=6),
         
         
         dbc.Col([
-            dbc.Row(dbc.Card(dbc.CardBody(dbc.Row([dbc.Col(card_c2,lg=2), dbc.Col(dcc.Graph(id='grafico-02-rg-c2-r1-c2'),lg=5), dbc.Col(dcc.Graph(id='grafico-02-rg-c2-r1-c3'), lg=5)])))), 
+            dbc.Row(dbc.Card(dbc.CardBody(dbc.Row([dbc.Col(card_c2,lg=2), dbc.Col(dcc.Graph(id='grafico-02-rg-c2-r1-c2'),lg=5), dbc.Col(dcc.Graph(id='grafico-02-rg-c2-r1-c3'), lg=5)]))),className='main_row g-2 my-auto'), 
             dbc.Row(dbc.Card(dbc.CardBody(dbc.Row([
-                dbc.Col([dbc.Row([dcc.Dropdown(options=lista_players, value='Lotta',id='identificador-player'), html.Div(id='disparador-imagem')]), dbc.Row(html.Header('Posição Geral'))], lg=2),
-                dbc.Col([dbc.Row([dbc.Col([dcc.Graph()], lg=6), dbc.Col([dcc.Graph()], lg=6)]), dbc.Row(dcc.Graph())], lg=10)
-            ]))))
-            ], lg=6)
-    ])
+                dbc.Col([dbc.Row([dcc.Dropdown(options=lista_players, value='Lotta',id='identificador-player', style={'width':'95%', 'font-size':'85%'}), html.Div(id='disparador-imagem', style={'width':'90%'})]), 
+                         dbc.Row([html.H6('Posição Geral', style={'margin-top':'20px', 'font-size':'85%'}), dbc.Card(card_position)], align='center'),
+                         dbc.Row([html.H6('Rodadas', style={'margin-top':'8px', 'font-size':'85%'}), dbc.Card(card_n_rodadas_individual)], align='center')], 
+                    lg=2),
+                dbc.Col([dbc.Row([dbc.Col([dcc.Graph(id='pizza_01')], lg=4), dbc.Col([dcc.Graph(id='pizza_02')], lg=4), dbc.Col([dcc.Graph(id='pizza_03')], lg=4)]),
+                         dbc.Row(dcc.Graph(id='grafico-linha-evolucao', style={'height':'300px'}))], 
+                    lg=10)
+            ]))), className='main_row g-2 my-auto')
+            ] ,lg=6)
+    ], className='main_row g-2 my-auto')
 ])
 
 
@@ -178,6 +207,7 @@ def update_grafico_um(criterio):
         fig_gks = px.bar(df_goleiros_gs, x='PLAYER', y=['GS','STG', 'DD'], barmode="group", title='GKs - GS / STG / DDs')
         return fig_gks
     
+    
 #            #disparador dropdown
 @app.callback(
     Output('dpd-01-rodada', 'options'),
@@ -189,13 +219,13 @@ def update_drop_um(selection):
     else:
         return lista_rodadas_copa
 
+
 @app.callback(
     Output('dpd-01-rodada', 'value'),
     Input('dpd-01-rodada', 'options')
 )
 def set_rodada(available_options):
     return available_options[0]
-
 
 
 #            #grafico rodada
@@ -264,6 +294,125 @@ def update_grafico_01_c1(competicao, rodada, criterio):
 def update_image(nome):
     children = html.Img(src=f"/assets/{nome}.png", style={'height':'150px'})
     return children
+
+
+#          #disparador posição
+@app.callback(
+    Output('disparador-posicao', 'children'),
+    Input('identificador-player', 'value')
+)
+def update_posicao(player):
+    position = df_table.loc[df_table['PLAYER']==player]['POSITION'].values[0]
+    position = str(position)+"°"
+    return position
+
+
+@app.callback(
+    Output('disparador-rodadas', 'children'),
+    Input('identificador-player', 'value')
+)
+def update_n_rodadas(player):
+    df_contador_liga = df.loc[df['PLAYER']==player]
+    df_contador_liga = df_contador_liga.groupby(['PLAYER', 'RODADA']).agg({'PARTIDA':'count'})
+    df_contador_liga = df_contador_liga.reset_index()
+    
+    df_contador_copa = df_copas.loc[df_copas['PLAYER']==player]
+    df_contador_copa = df_contador_copa.groupby(['PLAYER', 'RODADA']).agg({'PARTIDA':'count'})
+    df_contador_copa = df_contador_copa.reset_index()
+    
+    target = df_contador_liga['RODADA'].count() + df_contador_copa['RODADA'].count()
+    taxa_presenca = target / total_rodadas_season
+    taxa_presenca = round(taxa_presenca*100)
+    
+    
+    retorno = str(target) + '  ' + '(' + str(taxa_presenca) + '%' +')'
+    
+    return retorno
+
+
+#         #grafico pizza individual gol
+@app.callback(
+    Output('pizza_01', 'figure'),
+    Input('identificador-player', 'value')
+)
+def update_pizza_individual(player):
+    gols_player_selected = df_season[df_season['PLAYER']==player]
+    gols_player_selected = gols_player_selected['GOL'].sum()
+    
+    gols_rest = df_season[df_season['PLAYER']!=player]
+    gols_rest = gols_rest.groupby('PLAYER').agg({'GOL':'sum'}).mean()
+    gols_rest = round(gols_rest[0])
+
+    data = {'PLAYER': [player, 'Média Gols Competição'], 'GOLS': [gols_player_selected, gols_rest]}
+    dff = pd.DataFrame(data)
+    
+    fig = go.Figure(data=[go.Pie(labels=dff['PLAYER'], values=dff['GOLS'], hole=.7, pull=[0.04, 0], textinfo='value', showlegend=False)])
+    
+    fig.update_layout(title_text="Gols", width=175,height=175, margin=dict(l=0,r=0,b=0,t=40), annotations=[dict(text=gols_player_selected, font_size=26, showarrow=False)])
+
+    return fig
+
+
+#      #grafico pizza vitorias
+@app.callback(
+    Output('pizza_02', 'figure'),
+    Input('identificador-player', 'value')
+)
+def update_pizza_individual(player):
+    vitorias_selected_player = df_season[df_season['PLAYER']==player]
+    vitorias_selected_player = vitorias_selected_player['V'].sum()
+    
+    vitorias_rest = df_season[df_season['PLAYER']!=player]
+    vitorias_rest = vitorias_rest.groupby('PLAYER').agg({'V':'sum'}).mean()
+    vitorias_rest = round(vitorias_rest[0])
+
+    data = {'PLAYER': [player, 'Média Vitórias Competição'], 'V': [vitorias_selected_player, vitorias_rest]}
+    dff = pd.DataFrame(data)
+    
+    fig = go.Figure(data=[go.Pie(labels=dff['PLAYER'], values=dff['V'], hole=.7, pull=[0.04, 0], textinfo='value', showlegend=False)])
+    
+    
+    fig.update_layout(title_text="Vitórias", width=175,height=175, margin=dict(l=0,r=0,b=0,t=40), annotations=[dict(text=vitorias_selected_player, font_size=26, showarrow=False)])
+
+    return fig
+
+#     #grafico pizza derrotas
+@app.callback(
+    Output('pizza_03', 'figure'),
+    Input('identificador-player', 'value')
+)
+def update_pizza_individual(player):
+    derrotas_player_selected = df_season[df_season['PLAYER']==player]
+    derrotas_player_selected = derrotas_player_selected['D'].sum()
+    
+    derrotas_rest = df_season[df_season['PLAYER']!=player]
+    derrotas_rest = derrotas_rest.groupby('PLAYER').agg({'D':'sum'}).mean()
+    derrotas_rest = round(derrotas_rest[0])
+
+    data = {'PLAYER': [player, 'Média Derrotas Competição'], 'D': [derrotas_player_selected, derrotas_rest]}
+    dff = pd.DataFrame(data)
+    
+    fig = go.Figure(data=[go.Pie(labels=dff['PLAYER'], values=dff['D'], hole=.7, pull=[0.04, 0], textinfo='value', showlegend=False)])
+    
+    
+    fig.update_layout(title_text="Derrotas", width=175,height=175, margin=dict(l=0,r=0,b=0,t=40), annotations=[dict(text=derrotas_player_selected, font_size=26, showarrow=False)])
+
+    return fig
+
+#      #grafico linha pontuacao individual
+@app.callback(
+    Output('grafico-linha-evolucao', 'figure'),
+    Input('identificador-player', 'value')
+)
+def update_grafico_perfomance(player):
+    df_player_select = df_season.loc[df_season['PLAYER']==player]
+    df_player_select = df_player_select.groupby('RODADA').agg({'PTS':'sum'})
+    df_player_select = df_player_select.reset_index()
+    
+    fig = px.line(df_player_select, x='RODADA', y='PTS')
+    fig.update_layout(yaxis_title=None)
+    
+    return fig
 
 
 # Servidor  =================
