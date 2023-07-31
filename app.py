@@ -12,9 +12,9 @@ import dash_ag_grid as dag
 
 
 # Servidor
-load_figure_template("yeti")
+load_figure_template("minty")
 
-app = dash.Dash(external_stylesheets=[dbc.themes.YETI])
+app = dash.Dash(external_stylesheets=[dbc.themes.MINTY])
 server = app.server
 
 # DataFrame =================
@@ -27,7 +27,7 @@ card_total_partidas = dbc.Card(
         dbc.CardImg(src="/assets/image_1.png", top=True, style={'max-width':'58px','max-height':'58px', 'padding-left':'20px', 'padding-top':'20px'}),
         dbc.CardBody(
             [
-                html.H6("Partidas", className="card-title"),
+                html.H6("Partidas", className="card-title", style={'font-size':'90%'}),
                 html.H6(n_partidas_totais)
             ]
         ),
@@ -40,7 +40,7 @@ card_total_gols = dbc.Card(
         dbc.CardImg(src="/assets/bola_simbolo_card.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
         dbc.CardBody(
             [
-                html.H6("Gols", className="card-title"),
+                html.H6("Gols", className="card-title", style={'font-size':'90%'}),
                 html.H6(n_gols_temporada)
             ]
         ),
@@ -53,7 +53,7 @@ card_lider_atual = dbc.Card(
         dbc.CardImg(src="/assets/Trofeu_1.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
         dbc.CardBody(
             [
-                html.H6("1° geral", className="card-title"),
+                html.H6("1° geral", className="card-title", style={'font-size':'90%'}),
                 html.H6(lider_geral)
                 
             ]
@@ -67,7 +67,7 @@ card_n_rodadas = dbc.Card(
         dbc.CardImg(src="/assets/n_rodadas.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
         dbc.CardBody(
             [
-                html.H6("Rodadas|Liga", className="card-title"),
+                html.H6("Rodadas|Liga", className="card-title", style={'font-size':'90%'}),
                 html.H6(n_rodadas_liga)
             ]
         ),
@@ -80,7 +80,7 @@ card_n_copas = dbc.Card(
         dbc.CardImg(src="/assets/n_rodadas.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
         dbc.CardBody(
             [
-                html.H6("Copas", className="card-title"),
+                html.H6("Copas", className="card-title", style={'font-size':'90%'}),
                 html.H6(n_rodadas_copa)
             ]
         ),
@@ -91,17 +91,17 @@ card_n_copas = dbc.Card(
 card_c2 = dbc.Card(
     dbc.CardBody(
         [
-            dbc.RadioItems(options=competicoes, value=competicoes[0], id='radio-01-liga-copa', inline=True, style={}),
+            dbc.RadioItems(options=competicoes, value=competicoes[0], id='radio-01-liga-copa', inline=True, style={'font-size':'90%'}),
             
             html.Hr(),
             
-            html.H6('Rodada:', style={}),
-            dcc.Dropdown(id='dpd-01-rodada'),
+            html.H6('Rodada:', style={'font-size':'90%'}),
+            dcc.Dropdown(id='dpd-01-rodada', style={'font-size':'90%'}),
             
             html.Hr(),
             
-            html.H6('Critério:', style={}),
-            dcc.Dropdown(options=lista_criterio, value=lista_criterio[-1], id='dpd-02-criterios') 
+            html.H6('Critério:', style={'font-size':'90%'}),
+            dcc.Dropdown(options=lista_criterio, value=lista_criterio[-1], id='dpd-02-criterios', style={'font-size':'90%'}) 
         ]
     ),
 style={'height':'100%'})
@@ -176,8 +176,8 @@ app.layout = html.Div([
             dbc.Row(dbc.Card(dbc.CardBody(dbc.Row([dbc.Col(card_c2,lg=2), dbc.Col(dcc.Graph(id='grafico-02-rg-c2-r1-c2'),lg=5), dbc.Col(dcc.Graph(id='grafico-02-rg-c2-r1-c3'), lg=5)]))),className='main_row g-2 my-auto'), 
             dbc.Row(dbc.Card(dbc.CardBody(dbc.Row([
                 dbc.Col([dbc.Row([dcc.Dropdown(options=lista_players, value='Lotta',id='identificador-player', style={'width':'95%', 'font-size':'85%'}), html.Div(id='disparador-imagem', style={'width':'90%'})]), 
-                         dbc.Row([html.H6('Posição Geral', style={'margin-top':'20px', 'font-size':'85%'}), dbc.Card(card_position)], align='center'),
-                         dbc.Row([html.H6('Rodadas', style={'margin-top':'8px', 'font-size':'85%'}), dbc.Card(card_n_rodadas_individual)], align='center')], 
+                         dbc.Row([html.H6('Posição Geral', style={'margin-top':'20px', 'font-size':'85%'}), dbc.Card(card_position, color='#FEBAFF')], align='center'),
+                         dbc.Row([html.H6('Rodadas', style={'margin-top':'8px', 'font-size':'85%'}), dbc.Card(card_n_rodadas_individual, color='#D4D8FF')], align='center')], 
                     lg=2),
                 dbc.Col([dbc.Row([dbc.Col([dcc.Graph(id='pizza_01')], lg=4), dbc.Col([dcc.Graph(id='pizza_02')], lg=4), dbc.Col([dcc.Graph(id='pizza_03')], lg=4)]),
                          dbc.Row(dcc.Graph(id='grafico-linha-evolucao', style={'height':'300px'}))], 
@@ -363,8 +363,10 @@ def update_pizza_individual(player):
     vitorias_selected_player = vitorias_selected_player['V'].sum()
     
     vitorias_rest = df_season[df_season['PLAYER']!=player]
-    vitorias_rest = vitorias_rest.groupby('PLAYER').agg({'V':'sum'}).mean()
-    vitorias_rest = round(vitorias_rest[0])
+    vitorias_rest = vitorias_rest.groupby('PLAYER').agg({'V':'sum'})
+    vitorias_rest = vitorias_rest.reset_index()
+    vitorias_rest = vitorias_rest.loc[vitorias_rest['V']>=10]
+    vitorias_rest = round(vitorias_rest['V'].mean())
 
     data = {'PLAYER': [player, 'Média Vitórias Competição'], 'V': [vitorias_selected_player, vitorias_rest]}
     dff = pd.DataFrame(data)
@@ -386,8 +388,10 @@ def update_pizza_individual(player):
     derrotas_player_selected = derrotas_player_selected['D'].sum()
     
     derrotas_rest = df_season[df_season['PLAYER']!=player]
-    derrotas_rest = derrotas_rest.groupby('PLAYER').agg({'D':'sum'}).mean()
-    derrotas_rest = round(derrotas_rest[0])
+    derrotas_rest = derrotas_rest.groupby('PLAYER').agg({'D':'sum'})
+    derrotas_rest = derrotas_rest.reset_index()
+    derrotas_rest = derrotas_rest.loc[derrotas_rest['D']>=10]
+    derrotas_rest = round(derrotas_rest['D'].mean())
 
     data = {'PLAYER': [player, 'Média Derrotas Competição'], 'D': [derrotas_player_selected, derrotas_rest]}
     dff = pd.DataFrame(data)
