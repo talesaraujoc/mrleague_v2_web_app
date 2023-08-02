@@ -424,4 +424,4 @@ def update_grafico_perfomance(player):
 
 # Servidor  =================
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
