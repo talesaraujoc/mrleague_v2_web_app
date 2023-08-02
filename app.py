@@ -116,7 +116,7 @@ card_position = dbc.Card(
         ),
     ],
     
-style={'width':'70%'})
+style={'width':'95%'})
 
 card_n_rodadas_individual = dbc.Card(
     [
@@ -128,9 +128,10 @@ card_n_rodadas_individual = dbc.Card(
         ),
     ],
     
-style={'width':'70%'})
+style={'width':'95%'})
 
 columnDefs = [
+    {'field': 'POS', 'width': 65},
     {'field': 'PLAYER', 'width': 120, 'autosize': True},
     {'field': 'V', 'width': 60},
     {'field': 'E', 'width': 60},
@@ -140,7 +141,6 @@ columnDefs = [
     {'field': 'STG', 'width': 80},
     {'field': 'AMA', 'width': 80},
     {'field': 'AZUL', 'width': 80},
-    {'field': 'VER', 'width': 75},
     {'field': 'FALTA', 'width': 76},
     {'field': 'PTS', 'width': 90},
 ]
@@ -176,8 +176,8 @@ app.layout = html.Div([
             dbc.Row(dbc.Card(dbc.CardBody(dbc.Row([dbc.Col(card_c2,lg=2), dbc.Col(dcc.Graph(id='grafico-02-rg-c2-r1-c2'),lg=5), dbc.Col(dcc.Graph(id='grafico-02-rg-c2-r1-c3'), lg=5)]))),className='main_row g-2 my-auto'), 
             dbc.Row(dbc.Card(dbc.CardBody(dbc.Row([
                 dbc.Col([dbc.Row([dcc.Dropdown(options=lista_players, value='Lotta',id='identificador-player', style={'width':'95%', 'font-size':'85%'}), html.Div(id='disparador-imagem', style={'width':'90%'})]), 
-                         dbc.Row([html.H6('Posição Geral', style={'margin-top':'20px', 'font-size':'85%'}), dbc.Card(card_position, color='#FEBAFF')], align='center'),
-                         dbc.Row([html.H6('Rodadas', style={'margin-top':'8px', 'font-size':'85%'}), dbc.Card(card_n_rodadas_individual, color='#D4D8FF')], align='center')], 
+                         dbc.Row([html.H6('Posição Geral', style={'margin-top':'20px', 'font-size':'80%'}), dbc.Card(card_position, color='#FEBAFF')], align='center'),
+                         dbc.Row([html.H6('Rodadas', style={'margin-top':'8px', 'font-size':'80%'}), dbc.Card(card_n_rodadas_individual, color='#D4D8FF')], align='center')], 
                     lg=2),
                 dbc.Col([dbc.Row([dbc.Col([dcc.Graph(id='pizza_01')], lg=4), dbc.Col([dcc.Graph(id='pizza_02')], lg=4), dbc.Col([dcc.Graph(id='pizza_03')], lg=4)]),
                          dbc.Row(dcc.Graph(id='grafico-linha-evolucao', style={'height':'300px'}))], 
@@ -195,8 +195,11 @@ app.layout = html.Div([
 )
 def update_grafico_um(criterio):
     if criterio == 'ranking':
-        fig_corrida_geral = px.bar(df_corrida_geral, x='PLAYER', y='PTS', title='PONTUAÇÃO GERAL', text_auto='.2s')
+        df_corrida_geral_b = df_corrida_geral.loc[df_corrida_geral['PTS']>=100]
+        
+        fig_corrida_geral = px.bar(df_corrida_geral_b, x='PLAYER', y='PTS', title='PONTUAÇÃO GERAL', text_auto='.2s')
         return fig_corrida_geral
+    
     elif criterio == 'gol':
         fig_top_cinco_artilheiros = px.bar(df_top_cinco_artilheiros, x='PLAYER', y='GOL', title='TOP 5 - ARTILHEIRO')
         return fig_top_cinco_artilheiros
@@ -302,7 +305,7 @@ def update_image(nome):
     Input('identificador-player', 'value')
 )
 def update_posicao(player):
-    position = df_table.loc[df_table['PLAYER']==player]['POSITION'].values[0]
+    position = df_table.loc[df_table['PLAYER']==player]['POS'].values[0]
     position = str(position)+"°"
     return position
 
@@ -421,4 +424,4 @@ def update_grafico_perfomance(player):
 
 # Servidor  =================
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    app.run_server(debug=True)

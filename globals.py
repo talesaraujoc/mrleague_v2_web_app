@@ -17,7 +17,7 @@ lider_geral = df_corrida_geral.iloc[0]['PLAYER']
 df_table = df_season.groupby('PLAYER').agg({'V':'sum', 'E':'sum', 'D':'sum', 'GOL':'sum', 'ASS':'sum', 'STG':'sum','AMA':'sum', 'AZUL':'sum', 'VER':'sum','FALTA':'sum', 'PTS':'sum'})
 df_table = df_table.sort_values(by='PTS', ascending=False)
 df_table = df_table.reset_index()
-df_table['POSITION'] = df_table.index.values + 1
+df_table['POS'] = df_table.index.values + 1
 
 #algumas variáveis
 lista_partidas = df['PARTIDA'].to_list()
