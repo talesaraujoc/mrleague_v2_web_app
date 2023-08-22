@@ -24,7 +24,7 @@ from globals import *
 # Pré-layout ================
 card_total_partidas = dbc.Card(
     [
-        dbc.CardImg(src="/assets/image_1.png", top=True, style={'max-width':'58px','max-height':'58px', 'padding-left':'20px', 'padding-top':'20px'}),
+        dbc.CardImg(src="/images/image_1.png", top=True, style={'max-width':'58px','max-height':'58px', 'padding-left':'20px', 'padding-top':'20px'}),
         dbc.CardBody(
             [
                 html.H6("Partidas", className="card-title", style={'font-size':'90%'}),
@@ -37,7 +37,7 @@ card_total_partidas = dbc.Card(
 
 card_total_gols = dbc.Card(
     [
-        dbc.CardImg(src="/assets/bola_simbolo_card.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
+        dbc.CardImg(src="/images/bola_simbolo_card.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
         dbc.CardBody(
             [
                 html.H6("Gols", className="card-title", style={'font-size':'90%'}),
@@ -50,7 +50,7 @@ card_total_gols = dbc.Card(
 
 card_lider_atual = dbc.Card(
     [
-        dbc.CardImg(src="/assets/Trofeu_1.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
+        dbc.CardImg(src="/images/Trofeu_1.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
         dbc.CardBody(
             [
                 html.H6("1° geral", className="card-title", style={'font-size':'90%'}),
@@ -64,7 +64,7 @@ card_lider_atual = dbc.Card(
 
 card_n_rodadas = dbc.Card(
     [
-        dbc.CardImg(src="/assets/n_rodadas.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
+        dbc.CardImg(src="/images/n_rodadas.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
         dbc.CardBody(
             [
                 html.H6("Rodadas|Liga", className="card-title", style={'font-size':'90%'}),
@@ -77,7 +77,7 @@ card_n_rodadas = dbc.Card(
 
 card_n_copas = dbc.Card(
     [
-        dbc.CardImg(src="/assets/n_rodadas.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
+        dbc.CardImg(src="/images/n_rodadas.png", top=True, style={'max-width':'45px','max-height':'45px', 'padding-left':'20px', 'padding-top':'20px'}),
         dbc.CardBody(
             [
                 html.H6("Copas", className="card-title", style={'font-size':'90%'}),
@@ -295,7 +295,7 @@ def update_grafico_01_c1(competicao, rodada, criterio):
     Input('identificador-player', 'value')
 )
 def update_image(nome):
-    children = html.Img(src=f"/assets/{nome}.png", style={'height':'150px'})
+    children = html.Img(src=f"/images/{nome}.png", style={'height':'150px'})
     return children
 
 
