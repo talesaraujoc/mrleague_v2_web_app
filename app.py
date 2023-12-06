@@ -14,7 +14,8 @@ import dash_ag_grid as dag
 # Servidor
 load_figure_template("minty")
 
-app = dash.Dash(external_stylesheets=[dbc.themes.MINTY])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.MINTY])
+
 server = app.server
 
 # DataFrame =================
